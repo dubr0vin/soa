@@ -1,0 +1,46 @@
+@startuml
+'Все сделано в точности по официальной инструкции из предоставленной в задании ссылки https://c4model.com/#SystemContextDiagram'
+ !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+ skinparam wrapWidth 300
+ LAYOUT_WITH_LEGEND()
+ LAYOUT_LANDSCAPE()
+
+ title
+   <b>My Super Tracker v2023.02.21</b>
+ end title
+
+ Person(user, "Пользователь")
+
+ System_Boundary(system, "Tracker") {
+  Container(frontend, "Frontend", "WEB", "Отвечает за интерфейс, через который пользователь взаимодействует с системой")
+  
+  Container(main, "Главный сервис", "go", "Отвечает за клиентское API и за регистрацию и аутентификацию пользователей")
+  ContainerDb(main_db, "БД главного сервиса", "PostgreSQL", "Хранит аутентификационную информацию пользователей")
+  Rel_D(main, main_db, "Выполняет SQL запросы","Протокол бд")
+
+  Container(stat, "Сервис статистики", "go" , "Отвечает за подсчет лайков и просмотров")
+  ContainerDb(stat_db, "БД сервиса статистики", "Clickouse", "Хранит статистику по лйакам и просмотрам")
+  Rel_U(stat, stat_db, "Выполняет запросы","Протокол бд")
+
+  Rel_R(main, stat, "Запрашивает данные по статистике","grpc")
+
+
+  Container(post, "Сервис задач и комментариев", "go", "Отвечает за задачи и комментарии к ним")
+  ContainerDb(post_db, "БД сервиса задач и комментариев", "PostgreSQL", "Хранит информацию о постах и комментариях")
+  Rel_U(post, post_db, "Выполняет SQL запросы","Протокол бд")
+
+  Rel_L(main, post, "Запрашивает данные о постах и комментариях","grpc")
+
+  ContainerQueue(queue, "Брокер сообщений", "kafka", "Передает события о новых комментариях и лайках в сервис статистики")
+
+  Rel_U(queue, stat, "Отправляет новые события","Протокол брокера")
+
+  Rel(main, queue, "Отправляет новые события", "Протокол брокера")
+
+  Rel_D(frontend, main, "Делает AJAX запросы в REST API", "http(s)")
+ }
+
+Rel_R(user, frontend, "Просматривает задачи и статистику по ним, изменияет статусы, оставляет комментарии")
+
+@enduml
