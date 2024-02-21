@@ -1,0 +1,56 @@
+@startuml
+
+' hide the spot
+' hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity "User (main db)" as user {
+  * id : uuid
+  --
+  * name : text
+  * password_hash : text
+}
+
+entity "Task" as task {
+  * id: uuid
+  --
+  * author: uuid  
+  * title: text
+  * status: text
+  description: text
+}
+
+entity "Comment" as comment {
+  * id: uuid
+  --
+  * task_id: uuid
+  * author: uuid
+  * text: text
+}
+
+entity "Like" as like {
+  * id: uuid
+  --
+  * task_id: uuid
+  * user_id: uuid
+}
+
+entity "View" as view {
+  * id: uuid
+  --
+  * task_id: uuid
+  * user_id: uuid
+}
+
+user ||--o{ task
+task ||--o{ comment
+user ||--o{ comment
+
+task ||--o{ view
+user ||--o{ view
+
+task ||--o{ like
+user ||--o{ like
+@enduml
