@@ -1,0 +1,170 @@
+openapi: 3.0.3
+info:
+  title: SOA Task 2 API sec
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+tags:
+  - name: users
+    description: Operations about user
+  - name: auth
+    description: Authorization
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      summary: Create new user
+      parameters:
+        - name: login
+          in: query
+          description: login of new user
+          required: true
+          explode: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: password of new user
+          required: true
+          explode: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOperation'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - users
+      summary: Create new user
+      parameters:
+        - name: Authorization
+          in: header
+          description: token got from /token endpoint
+          required: true
+          explode: true
+          schema:
+            type: string
+      requestBody:
+        description: Partialy updatean existent user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOperation'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              
+  /token:
+    get:
+      tags:
+        - auth
+      summary: Create new user
+      parameters:
+        - name: login
+          in: query
+          description: login of user
+          required: true
+          explode: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: password of user
+          required: true
+          explode: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessTokenResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+components:
+  schemas:
+    SuccessOperation:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - "ok"
+    SuccessTokenResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - "ok"
+        token:
+          type: string
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - "error"
+        message:
+          type: string
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        birthdate:
+          type: string
+        mail:
+          type: string
+        phone:
+          type: string
+          
+
+    
