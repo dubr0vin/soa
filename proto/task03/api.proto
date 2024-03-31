@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+service Tasks {
+  rpc createTask(ProtoTask) returns (ProtoTask);
+  rpc updateTask(ProtoTask) returns (ProtoTask);
+  rpc deleteTask(DeleteRequest) returns (EmptyResponse);
+  rpc getTask(GetRequest) returns (ProtoTask);
+  rpc getTasks(PaginationRequest) returns (PaginationResponse);
+}
+
+message ProtoTask {
+  string id = 1;
+  string author = 2;
+  string title = 3;
+  string status = 4;
+  optional string description = 5;
+}
+
+message DeleteRequest {
+  string id = 1;
+  string author = 2;
+}
+
+
+message GetRequest {
+  string id = 1;
+}
+
+message EmptyResponse {
+
+}
+
+message PaginationRequest {
+  uint32 skip = 1;
+  uint32 take = 2;
+}
+
+message PaginationResponse {
+  repeated ProtoTask tasks = 1;
+}

@@ -1,0 +1,26 @@
+{
+  "name": "task03",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "protoc": "./protoc.sh",
+    "start": "ts-node src/index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.4",
+    "@prisma/client": "^5.11.0",
+    "dotenv": "^16.4.5",
+    "google-protobuf": "^3.21.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.2",
+    "grpc_tools_node_protoc_ts": "^5.3.3",
+    "grpc-tools": "^1.12.4",
+    "prisma": "^5.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3"
+  }
+}

@@ -9,6 +9,9 @@ tags:
     description: Operations about user
   - name: auth
     description: Authorization
+  - name: tasks
+    description: Operations about tasks
+
 paths:
   /users:
     post:
@@ -47,7 +50,7 @@ paths:
     patch:
       tags:
         - users
-      summary: Create new user
+      summary: Update user info
       parameters:
         - name: Authorization
           in: header
@@ -83,12 +86,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-              
+
   /token:
     get:
       tags:
         - auth
-      summary: Create new user
+      summary: Login and get auth token
       parameters:
         - name: login
           in: query
@@ -124,7 +127,200 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+  /task:
+    post:
+      tags:
+        - tasks
+      summary: Create task
+      requestBody:
+        description: Task's params
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTask'
+        required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessTaskResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - tasks
+      summary: Update task
+      requestBody:
+        description: Task's params
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTask'
+        required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessTaskResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - tasks
+      summary: Delete task
+      parameters:
+        - name: id
+          in: query
+          description: id of task
+          required: true
+          explode: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOperation'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - tasks
+      summary: Get task by id
+      parameters:
+        - name: id
+          in: query
+          description: id of task
+          required: true
+          explode: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessTaskResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tasks:
+    get:
+
+      tags:
+        - tasks
+      summary: Get tasks with pagination
+      parameters:
+        - name: skip
+          in: query
+          description: how many tasks to skip
+          schema:
+            type: number
+        - name: take
+          in: query
+          description: how many tasks to return
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessTasksResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     SuccessOperation:
@@ -165,6 +361,81 @@ components:
           type: string
         phone:
           type: string
-          
+
+    CreateTask:
+      type: object
+      required:
+        - title
+        - status
+      properties:
+        title:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+
+    UpdateTask:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+
+    Task:
+      type: object
+      required:
+        - id
+        - author
+        - title
+        - status
+      properties:
+        id:
+          type: string
+        author:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+
+    SuccessTaskResponse:
+      type: object
+      required:
+        - status
+        - result
+      properties:
+        status:
+          type: string
+          enum:
+            - "ok"
+        result:
+          $ref: '#/components/schemas/Task'
+
+    SuccessTasksResponse:
+      type: object
+      required:
+        - status
+        - result
+      properties:
+        status:
+          type: string
+          enum:
+            - "ok"
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+
+
 
     
