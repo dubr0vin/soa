@@ -1,0 +1,12 @@
+FROM node:latest
+WORKDIR /app
+ADD . .
+RUN npm ci
+
+ARG SECRET_KEY
+ENV SECRET_KEY $SECRET_KEY
+
+ARG MONGO_URL
+ENV MONGO_URL $MONGO_URL
+
+ENTRYPOINT ["npm", "start"]

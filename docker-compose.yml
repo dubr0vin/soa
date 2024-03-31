@@ -1,0 +1,27 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo:latest
+  task02:
+    build: task02
+    environment:
+      - SECRET_KEY=very secret key DEV ONLY!!!
+      - MONGO_URL=mongodb://mongodb:27017
+      - TASKS_API_ADDRESS=task03:4000
+    ports:
+      - 3000:3000
+  postgresql:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: dev
+      POSTGRES_USER: dev
+      POSTGRES_DB: dev
+    ports:
+      - 5432:5432
+  task03:
+    build: task03
+    environment:
+      - DATABASE_URL=postgresql://dev:dev@postgresql:5432/dev?schema=public
+      - GRPC_ADDRESS=0.0.0.0:4000
+    ports:
+      - 4000:4000
